@@ -1,0 +1,39 @@
+USE library_db;
+
+-- 7. Оқырман карталары
+CREATE TABLE IF NOT EXISTS LibraryCards (
+    cardID INT AUTO_INCREMENT PRIMARY KEY,
+    readerID INT NOT NULL UNIQUE,
+    card_number VARCHAR(30) NOT NULL UNIQUE,
+    status VARCHAR(30) NOT NULL DEFAULT 'Белсенді',
+    FOREIGN KEY (readerID) REFERENCES Readers(readerID)
+);
+
+-- 8. Кітаптардың орналасуы
+CREATE TABLE IF NOT EXISTS BookLocations (
+    locationID INT AUTO_INCREMENT PRIMARY KEY,
+    bookID INT NOT NULL UNIQUE,
+    hall INT NOT NULL,
+    shelf_row INT NOT NULL,
+    shelf INT NOT NULL,
+    FOREIGN KEY (bookID) REFERENCES Books(bookID)
+);
+
+-- 9. Кітаптарға пікірлер
+CREATE TABLE IF NOT EXISTS Reviews (
+    reviewID INT AUTO_INCREMENT PRIMARY KEY,
+    bookID INT NOT NULL,
+    readerID INT NOT NULL,
+    rating INT NOT NULL,
+    comment TEXT,
+    review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_rating CHECK (rating BETWEEN 1 AND 5),
+
+    FOREIGN KEY (bookID) REFERENCES Books(bookID),
+    FOREIGN KEY (readerID) REFERENCES Readers(readerID)
+);
+
+-- 10. Кітапхана қызметкерлері
+CREATE TABLE IF NOT EXISTS Employees (
+    employeeID INT AUTO_INCREMENT PRIMARY
