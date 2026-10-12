@@ -1,0 +1,89 @@
+CREATE DATABASE library_db;
+USE library_db;
+
+CREATE TABLE Authors (
+  authorID INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Categories (
+  categoryID INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Readers (
+  readerID INT AUTO_INCREMENT PRIMARY KEY,
+  fullname VARCHAR(120) NOT NULL,
+  phone VARCHAR(30)
+);
+
+CREATE TABLE Books (
+  bookID INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(200) NOT NULL,
+  authorID INT NOT NULL,
+  categoryID INT NOT NULL,
+  year_published INT,
+  CONSTRAINT fk_books_author
+    FOREIGN KEY (authorID) REFERENCES Authors(authorID),
+  CONSTRAINT fk_books_category
+    FOREIGN KEY (categoryID) REFERENCES Categories(categoryID)
+);
+
+CREATE TABLE Loans (
+  loanID INT AUTO_INCREMENT PRIMARY KEY,
+  bookID INT NOT NULL,
+  readerID INT NOT NULL,
+  loan_date DATE NOT NULL,
+  return_date DATE,
+  CONSTRAINT fk_loans_book
+    FOREIGN KEY (bookId) REFERENCES Books(bookID),
+  CONSTRAINT fk_loans_reader
+    FOREIGN KEY (readerID) REFERENCES Readers(readerID)
+);
+
+INSERT INTO Authors (name) VALUES
+('Лев Толстой'),
+('Александр Пушкин'),
+('Фёдор Достоевский'),
+('Мұқағали Мақатаев');
+
+INSERT INTO Categories (name) VALUES
+('Роман'),
+('Поэзия'),
+('Классика');
+
+INSERT INTO Readers (fullname, phone) VALUES
+('Айша Б', '+7 700 000 00 01'),
+('Арман', '+7 700 000 00 02'),
+('Інжу','+7 747 584 31 81'),
+('Лаура','+7 707 650 79 42');
+
+INSERT INTO Books (title, authorID, categoryID, year_published) VALUES
+('Война и мир', 1, 1, 1869),
+('Евгений Онегин', 2, 2, 1833),
+('Преступление и наказание', 3, 3, 1866),
+('Аманат', 4, 3, 2002);
+
+INSERT INTO Loans (bookID, readerID, loan_date, return_date) VALUES
+(1, 1, '2026-02-01', NULL),
+(2, 2, '2026-02-05', '2026-02-09'),
+(4, 3, '2026-02-09', NULL),
+(3, 4, '2026-02-02', '2026-02-06');
+SELECT * FROM Authors;
+SELECT * FROM Categories;
+SELECT * FROM Readers;
+SELECT * FROM Books;
+SELECT * FROM Loans;
+SELECT
+  L.loanID,
+  B.title,
+  A.name AS author,
+  R.fullname AS reader,
+  L.loan_date,
+  L.return_date
+FROM Loans l
+JOIN Books b ON b.bookID = l.bookID
+JOIN Authors a ON a.authorID = b.authorID
+JOIN Readers r ON r.readerID = l.readerID;
+ 
+
