@@ -1,0 +1,33 @@
+USE library_db;
+
+-- Кітаптарды онлайн брондау кестесі
+CREATE TABLE IF NOT EXISTS Reservations (
+    reservationID INT AUTO_INCREMENT PRIMARY KEY,
+    bookID INT NOT NULL,
+    readerID INT NOT NULL,
+    reservation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    expiry_date DATETIME,
+    status VARCHAR(30) NOT NULL DEFAULT 'Брондалды',
+
+    FOREIGN KEY (bookID) REFERENCES Books(bookID),
+    FOREIGN KEY (readerID) REFERENCES Readers(readerID)
+);
+
+-- Кітапты 24 сағатқа брондау мысалы
+-- Қайта орындағанда жаңа брондау қосылады
+INSERT INTO Reservations
+(bookID, readerID, expiry_date, status)
+VALUES
+(1, 1, DATE_ADD(NOW(), INTERVAL 24 HOUR), 'Брондалды');
+
+-- Брондауларды кітап пен оқырман атымен көрсету
+SELECT
+    r.reservationID,
+    b.title AS kitap,
+    o.fullname AS oqyrman,
+    r.reservation_date,
+    r.expiry_date,
+    r.status
+FROM Reservations r
+JOIN Books b ON r.bookID = b.bookID
+JOIN Readers o ON r.readerID = o.readerID;
